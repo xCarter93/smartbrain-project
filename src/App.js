@@ -6,6 +6,8 @@ import Rank from "./components/Rank/Rank";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
 import ParticlesBg from "particles-bg";
 import { Component } from "react";
+import SignIn from "./components/SignIn/SignIn";
+import Register from "./components/Register/Register";
 
 class App extends Component {
   constructor() {
@@ -13,26 +15,37 @@ class App extends Component {
     this.state = {
       input: "",
       imageURL: "",
-      box: {},
+      boxes: [],
+      route: "signin",
+      isSignedIn: false,
     };
   }
 
   calculateFaceLocation = (data) => {
-    const faceData = data.outputs[0].data.regions[0].region_info.bounding_box;
+    console.log(data.outputs[0].data.regions);
+    const faceBoxList = [];
     const image = document.getElementById("inputimage");
     const width = Number(image.width);
     const height = Number(image.height);
-    return {
-      leftCol: faceData.left_col * width,
-      topRow: faceData.top_row * height,
-      rightCol: width - faceData.right_col * width,
-      bottomRow: height - faceData.bottom_row * height,
-    };
+    const faceData = data.outputs[0].data.regions;
+    let key = 1;
+    for (let face of faceData) {
+      let faceData = face.region_info.bounding_box;
+      let faceBox = {
+        key: key,
+        leftCol: faceData.left_col * width,
+        topRow: faceData.top_row * height,
+        rightCol: width - faceData.right_col * width,
+        bottomRow: height - faceData.bottom_row * height,
+      };
+      faceBoxList.push(faceBox);
+      key++;
+    }
+    return faceBoxList;
   };
 
-  displayFaceBox = (box) => {
-    console.log(box);
-    this.setState({ box: box });
+  displayFaceBox = (boxes) => {
+    this.setState({ boxes: boxes });
   };
 
   onInputChange = (event) => {
@@ -42,7 +55,6 @@ class App extends Component {
   onSubmit = () => {
     const { input } = this.state;
     this.setState({ imageURL: input });
-    console.log(input);
 
     const createResponse = (imageURL) => {
       const PAT = "b37240271fe345ae91607df5204e0613";
@@ -87,18 +99,39 @@ class App extends Component {
       })
       .catch((error) => console.error("error", error));
   };
+
+  onRouteChange = (route) => {
+    if (route === "home") {
+      this.setState({ isSignedIn: true });
+    } else if (route === "signout") {
+      this.setState({ isSignedIn: false });
+    }
+    this.setState({ route: route });
+  };
   render() {
+    const { isSignedIn, route, imageURL, boxes } = this.state;
     return (
       <div className="App">
         <ParticlesBg type="cobweb" bg={true} num={250} />
-        <Navigation />
-        <Logo />
-        <Rank />
-        <ImageLinkForm
-          onInputChange={this.onInputChange}
-          onSubmit={this.onSubmit}
+        <Navigation
+          isSignedIn={isSignedIn}
+          onRouteChange={this.onRouteChange}
         />
-        <FaceRecognition imageURL={this.state.imageURL} box={this.state.box} />
+        <Logo />
+        {route === "home" ? (
+          <div>
+            <Rank />
+            <ImageLinkForm
+              onInputChange={this.onInputChange}
+              onSubmit={this.onSubmit}
+            />
+            <FaceRecognition imageURL={imageURL} boxes={boxes} />
+          </div>
+        ) : route === "signin" ? (
+          <SignIn onRouteChange={this.onRouteChange} />
+        ) : (
+          <Register onRouteChange={this.onRouteChange} />
+        )}
       </div>
     );
   }
