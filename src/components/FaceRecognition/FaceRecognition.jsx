@@ -8,7 +8,7 @@ const FaceRecognition = ({ imageURL, boxes }) => {
           id="inputimage"
           src={imageURL}
           alt=""
-          width="300px"
+          width="400px"
           height="auto"
         />
         {boxes.map((box, i) => {
