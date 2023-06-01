@@ -69,15 +69,18 @@ class App extends Component {
   };
 
   onSubmit = () => {
-    const { input } = this.state;
-    this.setState({ imageURL: input });
+    // const { input } = this.state;
+    this.setState({ imageURL: this.state.input });
 
     fetch("https://smart-brain-api-270t.onrender.com/imageurl", {
       method: "post",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input: input }),
+      body: JSON.stringify({ input: this.state.input }),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        console.log(response);
+        return response.json();
+      })
       .then((result) => {
         if (result) {
           fetch("https://smart-brain-api-270t.onrender.com/image", {
