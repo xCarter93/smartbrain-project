@@ -75,9 +75,11 @@ class App extends Component {
     fetch("https://smart-brain-api-270t.onrender.com/imageurl", {
       method: "post",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input: this.state.input }),
+      body: JSON.stringify({
+        input: this.state.input,
+      }),
     })
-      .then((response) => response.json())
+      .then((result) => result.json())
       .then((result) => {
         if (result) {
           fetch("https://smart-brain-api-270t.onrender.com/image", {
