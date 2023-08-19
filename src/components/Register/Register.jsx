@@ -20,6 +20,7 @@ class Register extends Component {
 		this.setState({ registerPassword: event.target.value });
 	};
 
+
 	onSubmitRegister = () => {
 		fetch("https://smartbrain-project-api.vercel.app/register", {
 			method: "post",
@@ -38,6 +39,7 @@ class Register extends Component {
 				}
 			});
 	};
+
 
 	render() {
 		return (
