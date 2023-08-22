@@ -17,8 +17,7 @@ class SignIn extends Component {
 
 	onSubmitSignin = () => {
 		fetch("https://smartbrain-project-api.vercel.app/signin", {
-			mode: "no-cors",
-			method: "post",
+			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				email: this.state.signInEmail,

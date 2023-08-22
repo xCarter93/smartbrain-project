@@ -22,8 +22,7 @@ class Register extends Component {
 
 	onSubmitRegister = () => {
 		fetch("https://smartbrain-project-api.vercel.app/register", {
-			mode: "no-cors",
-			method: "post",
+			method: "POST",
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({
 				name: this.state.registerName,
